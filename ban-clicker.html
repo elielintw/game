@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>BAN BAN BAN 點擊器（貼圖版）</title>
+  <style>
+  /* ===== Arcade Link Style ===== */
+a {
+  color: #7CFF6B;                 /* 亮綠主色 */
+  text-decoration: none;
+  font-weight: 700;
+  position: relative;
+  transition: color .15s ease, text-shadow .15s ease;
+}
+
+a::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #7CFF6B, #19C37D);
+  opacity: .7;
+}
+
+a:hover {
+  color: #EFFFF6;
+  text-shadow: 0 0 6px rgba(124,255,107,.7);
+}
+
+a:hover::after {
+  opacity: 1;
+  box-shadow: 0 0 6px rgba(124,255,107,.7);
+}
+
+a:active {
+  color: #19C37D;
+  text-shadow: 0 0 10px rgba(124,255,107,1);
+}
+
+/* 點過的連結 */
+a:visited {
+  color: #4BEF88;
+}
+    :root{
+      --bg:#0b0c10;
+      --panel:#111319;
+      --line:#2a2f3a;
+      --txt:#d7dbe6;
+      --muted:#9aa3b2;
+      --danger:#ff3b3b;
+      --warn:#ffcc33;
+      --ok:#44a7ff;
+      --good:#7CFF6B;
+    }
+    html,body{height:100%; margin:0; background:var(--bg); color:var(--txt);
+      font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif;}
+    .wrap{min-height:100%; display:flex; align-items:center; justify-content:center; padding:16px;}
+    .app{width:min(960px, 96vw); display:grid; gap:12px;}
+    .top{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      background:linear-gradient(180deg, rgba(255,59,59,0.14), rgba(255,59,59,0.05));
+      border:1px solid var(--line); border-radius:14px; padding:12px 14px;
+      box-shadow:0 8px 30px rgba(0,0,0,.35);
+    }
+    .brand{display:flex; align-items:center; gap:10px;}
+    .badge{
+      width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+      background:rgba(255,59,59,.18); border:1px solid rgba(255,59,59,.35);
+      font-weight:900; letter-spacing:.5px;
+    }
+    .title{line-height:1.1}
+    .title b{font-size:16px}
+    .title div{font-size:12px; color:var(--muted); margin-top:2px}
+    .stats{display:flex; gap:14px; flex-wrap:wrap; align-items:center;}
+    .stat{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:12px; padding:8px 10px; min-width:120px;
+    }
+    .stat .k{font-size:12px; color:var(--muted)}
+    .stat .v{font-size:18px; font-weight:800; margin-top:2px}
+    .bar{height:10px; border-radius:999px; background:rgba(255,255,255,.06); overflow:hidden; margin-top:6px}
+    .bar > i{display:block; height:100%; width:0%; background:var(--danger)}
+    .controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    button{
+      appearance:none; border:none; cursor:pointer;
+      background:rgba(255,59,59,.18); color:var(--txt);
+      border:1px solid rgba(255,59,59,.45); border-radius:12px;
+      padding:10px 12px; font-weight:800;
+      box-shadow:0 8px 22px rgba(0,0,0,.28);
+    }
+    button:hover{filter:brightness(1.08)}
+    button:active{transform:translateY(1px)}
+    .ghost{
+      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.10);
+      color:var(--txt); font-weight:700;
+    }
+    .hint{
+      font-size:12px; color:var(--muted); line-height:1.4;
+      padding:0 2px;
+    }
+    canvas{
+      width:100%; height:auto;
+      background:
+        radial-gradient(600px 260px at 70% 20%, rgba(68,167,255,.08), transparent 60%),
+        radial-gradient(560px 240px at 20% 80%, rgba(255,59,59,.10), transparent 60%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0px, rgba(255,255,255,.02) 1px, transparent 1px, transparent 28px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0px, rgba(255,255,255,.02) 1px, transparent 1px, transparent 28px);
+      border:1px solid var(--line); border-radius:16px;
+      box-shadow:0 18px 60px rgba(0,0,0,.45);
+      touch-action:manipulation;
+	  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text x='8' y='22' font-size='20' fill='white' stroke='black' stroke-width='1'>✘</text></svg>") 16 16, auto;
+    }
+    .toast{
+      position:fixed; left:50%; top:14px; transform:translateX(-50%);
+      background:rgba(15,17,23,.92); border:1px solid rgba(255,255,255,.10);
+      padding:10px 12px; border-radius:12px; font-size:13px; color:var(--txt);
+      box-shadow:0 12px 40px rgba(0,0,0,.4);
+      opacity:0; pointer-events:none; transition:opacity .2s;
+      max-width:min(640px, 92vw);
+      display:flex; gap:8px; align-items:flex-start;
+    }
+    .toast.show{opacity:1}
+    .toast .dot{width:10px; height:10px; border-radius:999px; background:var(--warn); margin-top:4px}
+    .footer{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px}
+    .kbd{
+      display:inline-block; padding:2px 6px; border-radius:8px;
+      background:#1a1e27; border:1px solid rgba(255,255,255,.10); color:var(--txt);
+      font-size:12px; font-weight:700;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="app">
+    <div class="top">
+      <div class="brand">
+        <div class="badge">BAN</div>
+        <div class="title">
+          <b>BAN BAN BAN</b>
+          <div>資安檢測指標全數不合格！政府去函要求全都不配合！萬惡的小紅書必須被 BAN！</div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="k">分數</div>
+          <div class="v" id="score">0</div>
+        </div>
+        <div class="stat">
+          <div class="k">連擊</div>
+          <div class="v" id="combo">0</div>
+        </div>
+        <div class="stat" style="min-width:220px">
+          <div class="k">污染值 <span id="polPct">0%</span></div>
+          <div class="bar"><i id="polBar"></i></div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="btnStart">開始</button>
+        <button class="ghost" id="btnRestart">重來 (R)</button>
+        <button class="ghost" id="btnMute">音效：開</button>
+      </div>
+    </div>
+
+    <canvas id="c" width="960" height="540"></canvas>
+
+    <div class="footer">
+      <div class="hint">
+        操作：滑鼠/手指點擊泡泡封鎖；<span class="kbd">R</span> 重開；連擊 12 進 BAN MODE（得分加倍 + 額外回血）。<br/>
+        彩蛋：奈米香蕉會分裂、國旅盤子會扣分+增汙、回答我會卡你一下、普發一萬超稀有清場回血。
+      </div>
+      <div class="hint">
+        歡迎至 YouTube 收聽<a href="https://youtu.be/tmONZecue6c" target="_blank">主題曲『BAN BAN BAN』</a>！ by <a href="https://blog.elielin.com/" target="_blank">elielin</a> with <a href="https://chatgpt.com/" target="_blank">ChatGTP</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><div class="dot"></div><div id="toastText"></div></div>
+
+<script>
+(() => {
+
+const BGM = new Audio("bgm.mp3");
+BGM.loop = true;
+BGM.volume = 0.35;   // 可自行調小聲一點
+
+  // =============================
+  // 你要換圖：只改這一段檔名即可
+  // 把圖片跟 HTML 放同一資料夾（或 GitHub Pages 同一路徑）
+  // =============================
+  const SPRITE_FILES = {
+    normal: "xhs.png",
+    nano: "nano.png",
+    plate: "plate.png",
+    answer: "answer.png",
+    cash: "cash.png",
+  };
+
+  // ===== Canvas / UI =====
+  const canvas = document.getElementById("c");
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("score");
+  const comboEl = document.getElementById("combo");
+  const polPctEl = document.getElementById("polPct");
+  const polBarEl = document.getElementById("polBar");
+  const btnStart = document.getElementById("btnStart");
+  const btnRestart = document.getElementById("btnRestart");
+  const btnMute = document.getElementById("btnMute");
+  const toast = document.getElementById("toast");
+  const toastText = document.getElementById("toastText");
+
+  const W = 960, H = 540;
+  const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+
+  function setCanvasScale(){
+    const cssW = canvas.clientWidth || W;
+    const ratio = cssW / W;
+    const realW = Math.round(W * DPR);
+    const realH = Math.round(H * DPR);
+    if (canvas.width !== realW || canvas.height !== realH){
+      canvas.width = realW;
+      canvas.height = realH;
+    }
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  setCanvasScale();
+  window.addEventListener("resize", setCanvasScale);
+
+  // ===== Image loading (auto fallback to text if missing) =====
+  function loadImg(src){
+    const img = new Image();
+    img.src = src;
+    return img;
+  }
+  const sprite = {
+    normal: loadImg(SPRITE_FILES.normal),
+    nano: loadImg(SPRITE_FILES.nano),
+    plate: loadImg(SPRITE_FILES.plate),
+    answer: loadImg(SPRITE_FILES.answer),
+    cash: loadImg(SPRITE_FILES.cash),
+  };
+  function imgReady(img){
+    return img && img.complete && img.naturalWidth > 0;
+  }
+
+  // ===== Helpers =====
+  const rand = (a,b) => Math.random()*(b-a)+a;
+  const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+  const dist2 = (x1,y1,x2,y2) => {
+    const dx = x1-x2, dy = y1-y2;
+    return dx*dx + dy*dy;
+  };
+
+  function toastMsg(msg, dotColor){
+    toastText.textContent = msg;
+    toast.querySelector(".dot").style.background = dotColor || "var(--warn)";
+    toast.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=>toast.classList.remove("show"), 1600);
+  }
+
+  // ===== Audio (WebAudio beep) =====
+  let muted = false;
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let ac = null;
+
+  function beep(freq=440, dur=0.05, type="square", gain=0.05){
+    if(muted) return;
+    try{
+      if(!ac) ac = new AudioCtx();
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = type;
+      o.frequency.value = freq;
+      g.gain.value = gain;
+      o.connect(g); g.connect(ac.destination);
+      o.start();
+      o.stop(ac.currentTime + dur);
+    }catch(e){}
+  }
+
+  // ===== Bubble Types =====
+  const TYPES = {
+    NORMAL: "normal",
+    NANO_BANANA: "nano",
+    TRAVEL_PLATE: "plate",
+    ANSWER_ME: "answer",
+    CASH_10K: "cash",
+  };
+
+  // ===== Game State =====
+  const bubbles = [];
+  const particles = [];
+
+  let running = false;
+  let over = false;
+  let lastT = 0;
+
+  let score = 0;
+  let combo = 0;
+  let comboTimer = 0;
+
+  let pol = 0; // 0..100
+  let spawnRate = 1.2;
+  let timeAlive = 0;
+
+  let banMode = false;
+  let banModeTimer = 0;
+
+  let stunTimer = 0; // "回答我"干擾
+  let spawnAcc = 0;
+
+  function pickType(){
+    const r = Math.random();
+    if(r < 0.02) return TYPES.ANSWER_ME;
+    if(r < 0.04) return TYPES.TRAVEL_PLATE;
+    if(r < 0.07) return TYPES.NANO_BANANA;
+    if(r < 0.075) return TYPES.CASH_10K;
+    return TYPES.NORMAL;
+  }
+
+  function makeBubble(x=null, y=null, type=null, scale=1){
+    const t = type || pickType();
+    const rBase = (t===TYPES.CASH_10K) ? rand(22,30) : rand(20,32);
+    const r = rBase * scale;
+
+    const bx = (x==null) ? rand(r, W - r) : x;
+    const by = (y==null) ? rand(r, H - r) : y;
+
+    const speed = rand(18, 70) * (t===TYPES.NANO_BANANA ? 1.15 : 1.0);
+    const ang = rand(0, Math.PI*2);
+    const vx = Math.cos(ang)*speed;
+    const vy = Math.sin(ang)*speed;
+
+    // ===== 你目前調成「大概 60 秒第一次死」的節奏 =====
+    const life = rand(3.2, 5.4) * (t===TYPES.ANSWER_ME ? 1.15 : 1.0);
+
+    return {
+      x: bx, y: by, r,
+      vx, vy,
+      type: t,
+      age: 0,
+      life,
+      wob: rand(0.6, 1.6),
+    };
+  }
+
+  function roundRect(ctx,x,y,w,h,r){
+    const rr = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr,y);
+    ctx.arcTo(x+w,y, x+w,y+h, rr);
+    ctx.arcTo(x+w,y+h, x,y+h, rr);
+    ctx.arcTo(x,y+h, x,y, rr);
+    ctx.arcTo(x,y, x+w,y, rr);
+    ctx.closePath();
+  }
+
+  // ===== Particles =====
+  function spawnTextBurst(x,y,text, n=10){
+    for(let i=0;i<n;i++){
+      particles.push({
+        x,y,
+        vx: rand(-120,120),
+        vy: rand(-160,-40),
+        g: 380,
+        life: rand(0.4, 0.9),
+        age: 0,
+        text,
+        size: rand(12,16),
+        rot: rand(-0.6,0.6),
+      });
+    }
+  }
+
+  // ===== Input =====
+  function getCanvasPoint(evt){
+    const rect = canvas.getBoundingClientRect();
+    const cx = (evt.clientX - rect.left) * (W / rect.width);
+    const cy = (evt.clientY - rect.top) * (H / rect.height);
+    return {x: cx, y: cy};
+  }
+
+  function startGame(forceResumeAudio=false){
+    if(forceResumeAudio && ac && ac.state === "suspended"){
+      ac.resume().catch(()=>{});
+    }
+    if(!running){
+      running = true;
+      over = false;
+      btnStart.textContent = "進行中";
+      toastMsg("開始！BAN BAN BAN！", "var(--danger)");
+      beep(520,0.06,"square",0.06);
+    }
+  }
+
+  function restart(){
+    bubbles.length = 0;
+    particles.length = 0;
+    running = true;
+    over = false;
+    lastT = 0;
+
+    score = 0;
+    combo = 0;
+    comboTimer = 0;
+    pol = 0;
+
+    spawnRate = 1.2;
+    timeAlive = 0;
+
+    banMode = false;
+    banModeTimer = 0;
+
+    stunTimer = 0;
+    spawnAcc = 0;
+
+    for(let i=0;i<6;i++) bubbles.push(makeBubble());
+    btnStart.textContent = "進行中";
+    toastMsg("重新開始！", "var(--ok)");
+    beep(620,0.06,"square",0.06);
+    syncUI();
+	
+	BGM.play().catch(()=>{});
+  }
+
+  function gameOver(){
+    over = true;
+    running = false;
+    btnStart.textContent = "開始";
+    toastMsg("污染值爆表！BAN 失敗（按 R 重來）", "var(--danger)");
+    beep(90,0.18,"sawtooth",0.06);
+	BGM.pause();
+	BGM.currentTime = 0;
+  }
+
+  function clickAt(x,y){
+    if(!running){
+      startGame(true);
+	  BGM.play().catch(()=>{});
+      return;
+    }
+    if(over) return;
+
+    let hitIndex = -1;
+    let best = Infinity;
+    for(let i=0;i<bubbles.length;i++){
+      const b = bubbles[i];
+      if(dist2(x,y,b.x,b.y) <= b.r*b.r){
+        const s = b.age;
+        if(s < best){ best=s; hitIndex=i; }
+      }
+    }
+    if(hitIndex>=0) popBubble(hitIndex);
+    else{
+      combo = 0; comboTimer = 0;
+      // ===== miss 懲罰（已調低）=====
+      pol = clamp(pol + 0.005, 0, 100);
+      beep(130, 0.04, "sawtooth", 0.03);
+      syncUI();
+    }
+  }
+
+  canvas.addEventListener("pointerdown", (e)=>{
+    e.preventDefault();
+    const p = getCanvasPoint(e);
+    clickAt(p.x,p.y);
+  }, {passive:false});
+
+  window.addEventListener("keydown", (e)=>{
+    const k = e.key.toLowerCase();
+    if(k === "r"){ e.preventDefault(); restart(); }
+  });
+
+  btnStart.addEventListener("click", ()=> startGame(true));
+  btnRestart.addEventListener("click", ()=> restart());
+  btnMute.addEventListener("click", ()=>{
+    muted = !muted;
+    btnMute.textContent = "音效：" + (muted ? "關" : "開");
+    toastMsg(muted ? "音效已關閉" : "音效已開啟", muted ? "var(--muted)" : "var(--good)");
+    if(!muted) beep(660, 0.04, "square", 0.05);
+  });
+
+  // ===== Scoring / Combo =====
+  function addScore(base){
+    const mult = banMode ? 2 : 1;
+    score += Math.floor(base * mult);
+  }
+
+  function bumpCombo(){
+    combo += 1;
+    comboTimer = 3;
+    if(combo >= 12 && !banMode){
+      banMode = true;
+      banModeTimer = 12.0;
+      toastMsg("BAN MODE 啟動！得分加倍！", "var(--good)");
+      beep(880, 0.08, "square", 0.08);
+    }
+  }
+
+  function popBubble(i){
+    const b = bubbles[i];
+    bubbles.splice(i,1);
+
+    spawnTextBurst(b.x, b.y, "BAN!", 10);
+    beep(420 + rand(-60,60), 0.03, "square", 0.05);
+
+    let basePoints = 1;
+
+    if(b.type === TYPES.TRAVEL_PLATE){
+      basePoints = -5;
+      combo = 0; comboTimer = 0;
+      pol = clamp(pol + 2.2, 0, 100);
+      spawnTextBurst(b.x, b.y, "-5", 8);
+      toastMsg("國旅盤子：扣分！", "var(--warn)");
+      beep(160, 0.06, "sawtooth", 0.05);
+    }else{
+      bumpCombo();
+    }
+
+    if(b.type === TYPES.ANSWER_ME){
+      pol = clamp(pol + 3.0, 0, 100);
+      toastMsg("回答我！你被卡住一下…", "var(--warn)");
+      spawnTextBurst(b.x, b.y, "回答我！", 8);
+      stunTimer = 0.5;
+      beep(220, 0.08, "triangle", 0.05);
+    }
+
+    if(b.type === TYPES.NANO_BANANA){
+      toastMsg("奈米香蕉：分裂成 3 個！", "var(--warn)");
+      for(let k=0;k<3;k++){
+        const nb = makeBubble(
+          clamp(b.x + rand(-18,18), 12, W-12),
+          clamp(b.y + rand(-18,18), 12, H-12),
+          TYPES.NORMAL,
+          0.62
+        );
+        nb.vx *= 1.35; nb.vy *= 1.35;
+        nb.life = rand(2.4, 3.6);
+        bubbles.push(nb);
+      }
+      basePoints = 2;
+      beep(520, 0.05, "square", 0.06);
+    }
+
+    if(b.type === TYPES.CASH_10K){
+      toastMsg("普發一萬：清場！爽！", "var(--good)");
+      const cleared = bubbles.length;
+      bubbles.length = 0;
+      basePoints = 20 + cleared;
+      spawnTextBurst(b.x, b.y, "全場 BAN！", 14);
+      beep(990, 0.10, "square", 0.09);
+    }
+
+    addScore(basePoints);
+
+    // ===== 爽回血（已調到比較好玩）=====
+    if(b.type === TYPES.NORMAL) pol = clamp(pol - 2.5, 0, 100);
+    if(b.type === TYPES.NANO_BANANA) pol = clamp(pol - 1.5, 0, 100);
+    if(b.type === TYPES.CASH_10K) pol = clamp(pol - 25, 0, 100);
+
+    if(banMode && b.type !== TYPES.TRAVEL_PLATE && b.type !== TYPES.ANSWER_ME){
+      pol = clamp(pol - 0.7, 0, 100);
+    }
+
+    syncUI();
+  }
+
+  function syncUI(){
+    scoreEl.textContent = score;
+    comboEl.textContent = combo;
+    const pct = Math.floor(pol);
+    polPctEl.textContent = pct + "%";
+    polBarEl.style.width = pct + "%";
+  }
+
+  // ===== Update / Draw =====
+  function update(dt){
+    if(!running) return;
+
+    timeAlive += dt;
+
+    spawnRate = 1.2 + Math.min(4.0, timeAlive / 12);
+
+    const maxBubbles = 10 + Math.floor(timeAlive/10);
+    const target = clamp(maxBubbles, 10, 18); // 上限壓住
+
+    spawnAcc += dt * spawnRate * (stunTimer>0 ? 0.25 : 1.0);
+    while(spawnAcc >= 1){
+      spawnAcc -= 1;
+      if(bubbles.length < target){
+        const burst = (Math.random() < 0.10) ? 2 : 1;
+        for(let k=0;k<burst;k++){
+          if(bubbles.length < target) bubbles.push(makeBubble());
+        }
+      }
+    }
+
+    if(comboTimer > 0){
+      comboTimer -= dt;
+      if(comboTimer <= 0) combo = 0;
+    }
+
+    if(banMode){
+      banModeTimer -= dt;
+      if(banModeTimer <= 0){
+        banMode = false;
+        toastMsg("BAN MODE 結束", "var(--muted)");
+      }
+    }
+
+    const slow = (stunTimer > 0) ? 0.22 : 1.0;
+    if(stunTimer > 0) stunTimer -= dt;
+
+    for(const b of bubbles){
+      b.age += dt;
+      b.x += b.vx * dt * slow;
+      b.y += b.vy * dt * slow;
+
+      if(b.x < b.r){ b.x=b.r; b.vx*=-1; }
+      if(b.x > W-b.r){ b.x=W-b.r; b.vx*=-1; }
+      if(b.y < b.r){ b.y=b.r; b.vy*=-1; }
+      if(b.y > H-b.r){ b.y=H-b.r; b.vy*=-1; }
+
+      b._pulse = (Math.sin((b.age*6)*b.wob)+1)*0.5;
+
+      // ===== 污染值調整（已放慢）=====
+      if(b.age > b.life){
+        pol = clamp(pol + 0.09 * dt * 12, 0, 100);
+      }else{
+        pol = clamp(pol + 0.008 * dt * (1 + bubbles.length*0.02), 0, 100);
+      }
+    }
+
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.age += dt;
+      p.vy += p.g * dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      if(p.age >= p.life) particles.splice(i,1);
+    }
+
+    if(pol >= 100) gameOver();
+    syncUI();
+  }
+
+  function drawBubbleFallbackText(b, rr){
+    // 沒圖時用文字版本
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    const rot = Math.sin(b.age*2) * 0.06;
+    ctx.rotate(rot);
+    ctx.globalAlpha = 0.95;
+
+    let label = "XHS", lab2 = "BAN?";
+    if(b.type === TYPES.NANO_BANANA){ label="NANO"; lab2="🍌"; }
+    if(b.type === TYPES.TRAVEL_PLATE){ label="國旅"; lab2="盤子"; }
+    if(b.type === TYPES.ANSWER_ME){ label="回答我"; lab2="！"; }
+    if(b.type === TYPES.CASH_10K){ label="普發"; lab2="10000"; }
+
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.strokeStyle = "rgba(255,255,255,0.10)";
+    ctx.lineWidth = 1;
+    const w = rr*1.18, h = rr*0.74;
+    roundRect(ctx, -w/2, -h/2, w, h, 10);
+    ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle = "rgba(215,219,230,0.95)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "800 14px system-ui";
+    ctx.fillText(label, 0, -5);
+    ctx.font = "800 12px system-ui";
+    ctx.fillText(lab2, 0, 12);
+
+    ctx.restore();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // scanlines
+    ctx.save();
+    ctx.globalAlpha = 0.09;
+    ctx.fillStyle = "#000";
+    for(let y=0;y<H;y+=4) ctx.fillRect(0,y,W,1);
+    ctx.restore();
+
+    // red warning frame
+    const warnA = clamp((pol-60)/40, 0, 1) * 0.35;
+    if(warnA > 0){
+      ctx.save();
+      ctx.globalAlpha = warnA;
+      ctx.strokeStyle = "#ff3b3b";
+      ctx.lineWidth = 10;
+      ctx.strokeRect(5,5,W-10,H-10);
+      ctx.restore();
+    }
+
+    // bubbles
+    for(const b of bubbles){
+      const pulse = 1 + (b._pulse||0)*0.12;
+      const rr = b.r * pulse;
+
+      // bubble ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, rr, 0, Math.PI*2);
+
+      let fill = "rgba(255,59,59,0.12)";
+      let stroke = "rgba(255,59,59,0.55)";
+      if(b.type === TYPES.NANO_BANANA){ fill="rgba(255,204,51,0.14)"; stroke="rgba(255,204,51,0.62)"; }
+      if(b.type === TYPES.TRAVEL_PLATE){ fill="rgba(154,163,178,0.14)"; stroke="rgba(154,163,178,0.62)"; }
+      if(b.type === TYPES.ANSWER_ME){ fill="rgba(68,167,255,0.12)"; stroke="rgba(68,167,255,0.62)"; }
+      if(b.type === TYPES.CASH_10K){ fill="rgba(124,255,107,0.13)"; stroke="rgba(124,255,107,0.70)"; }
+
+      ctx.fillStyle = fill; ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = stroke; ctx.stroke();
+      ctx.restore();
+
+      // ===== draw image in the center (if available) =====
+      const img = sprite[b.type];
+      if(imgReady(img)){
+        ctx.save();
+        ctx.translate(b.x, b.y);
+        const rot = Math.sin(b.age*2) * 0.06;
+        ctx.rotate(rot);
+        const s = (rr * 2) * 1.10; // 圖片大小（可改 1.10）
+        ctx.drawImage(img, -s/2, -s/2, s, s);
+
+        // BAN MODE glow
+        if(banMode){
+          ctx.globalAlpha = 0.18;
+          ctx.strokeStyle = "rgba(124,255,107,0.9)";
+          ctx.lineWidth = 5;
+          ctx.beginPath();
+          ctx.arc(0,0, rr*0.92, 0, Math.PI*2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }else{
+        drawBubbleFallbackText(b, rr);
+      }
+
+      // lifetime ring
+      const lifeP = clamp(b.age / b.life, 0, 1);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, rr+6, -Math.PI/2, -Math.PI/2 + Math.PI*2*lifeP);
+      ctx.strokeStyle = (b.type===TYPES.CASH_10K) ? "rgba(124,255,107,0.55)" : "rgba(255,255,255,0.10)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // particles
+    for(const p of particles){
+      const a = 1 - (p.age/p.life);
+      ctx.save();
+      ctx.globalAlpha = a;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.font = `900 ${p.size}px system-ui`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(255,59,59,0.95)";
+      ctx.fillText(p.text, 0, 0);
+      ctx.restore();
+    }
+
+    // overlay when not running
+    if(!running){
+      ctx.save();
+      ctx.fillStyle = "rgba(0,0,0,0.50)";
+      ctx.fillRect(0,0,W,H);
+
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      ctx.font = "900 30px system-ui";
+      const main = over ? "污染值爆表！" : "點一下開始 BAN！";
+      ctx.fillText(main, W/2, H/2 - 20);
+
+      ctx.font = "700 16px system-ui";
+      const sub = over ? `你的分數：${score}（按 R 重來）` : "越久越難，連擊 12 進 BAN MODE";
+      ctx.fillStyle = "rgba(215,219,230,0.85)";
+      ctx.fillText(sub, W/2, H/2 + 18);
+
+      ctx.restore();
+    }
+
+    // corner status
+    ctx.save();
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = "rgba(0,0,0,0.28)";
+    roundRect(ctx, 10, 10, 190, 44, 12);
+    ctx.fill();
+    ctx.fillStyle = "rgba(215,219,230,0.9)";
+    ctx.font = "800 13px system-ui";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText(`BAN MODE: ${banMode ? "ON" : "OFF"}`, 22, 30);
+    ctx.fillStyle = "rgba(154,163,178,0.9)";
+    ctx.font = "700 12px system-ui";
+    ctx.fillText(`速度: ${spawnRate.toFixed(1)}/s`, 22, 44);
+    ctx.restore();
+  }
+
+  function loop(tms){
+    const t = tms/1000;
+    const dt = Math.min(0.033, (t - lastT) || 0);
+    lastT = t;
+
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  // init
+  restart();
+  running = false;
+  btnStart.textContent = "開始";
+  requestAnimationFrame(loop);
+
+})();
+</script>
+</body>
+</html>
