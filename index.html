@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣同人歷史檢定：尋找上古神獸</title>
+    <style>
+        :root {
+            --primary-color: #5d3320; /* 深咖啡色墨水 */
+            --accent-color: #9e2a2b; /* 朱紅色印泥感 */
+            --paper-color: #fffcf5; /* 米黃色宣紙 */
+            --spine-color: #3e2723; /* 深色皮革書脊 */
+            --table-bg: #d8cca3; /* 桌面背景色 */
+            --fb-color: #1877F2;
+            --threads-color: #000000;
+            --ink-color: #2c3e50;
+            --book-border: #8b4513;
+            --accent: #a0522d;
+        }
+
+        body {
+            background-color: #e0d7c6;
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+            font-family: "Noto Serif TC", "Georgia", "Microsoft JhengHei", serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* 鎖定視窗高度 */
+            overflow: hidden; /* 防止外層捲動 */
+        }
+
+        /* 書本主體容器 */
+        #book-container {
+            background-color: var(--paper-color);
+            width: 90%;
+            max-width: 500px;
+            height: 85vh; /* 鎖定書本高度為螢幕 85% */
+            padding: 30px;
+            position: relative;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.3), -5px 0 15px rgba(0,0,0,0.1) inset;
+            border-left: 12px solid var(--book-border);
+            border-radius: 5px 15px 15px 5px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* 內部內容過長時自動捲動 */
+        }
+
+        /* 裝飾性元素 */
+        h1 { 
+            color: var(--primary-color); 
+            text-align: center; 
+            font-size: 2.2rem; 
+            margin-top: 0;
+            padding-bottom: 20px;
+            border-bottom: 3px double var(--primary-color); /* 古典雙線邊框 */
+            margin-bottom: 30px;
+        }
+
+        .page { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .progress { font-size: 1rem; color: #888; margin-bottom: 15px; font-weight: bold; text-align: center; font-style: italic; }
+        .question { font-size: 1.4rem; font-weight: bold; margin-bottom: 25px; line-height: 1.5; color: var(--primary-color); }
+        
+        .options { display: grid; gap: 15px; }
+        button {
+            padding: 15px 20px;
+            font-size: 1.15rem;
+            border: 1px solid #d4c5b9; /* 較柔和的邊框色 */
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+            font-family: inherit;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+        button:hover:not(:disabled) { background: #f0ece3; border-color: var(--primary-color); transform: translateY(-1px); }
+        button.correct { background: #e3f0d8 !important; border-color: #7cb342; font-weight: bold; color: #2e5c18; }
+        button.wrong { background: #f9e3e3 !important; border-color: #e57373; color: #c62828;}
+
+        #explanation {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f4f1e8; /* 解析區塊底色 */
+            border-left: 4px solid var(--accent-color);
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #553322;
+        }
+
+        .btn-action {
+            display: block; width: 100%; margin-top: 30px;
+            background: var(--primary-color); color: #f2e9d8;
+            text-align: center; padding: 18px; border: none;
+            border-radius: 4px; font-size: 1.3rem; cursor: pointer; font-weight: bold;
+            letter-spacing: 2px;
+            box-shadow: 3px 3px 10px rgba(93, 51, 32, 0.3);
+        }
+        .btn-action:hover { background: #4a281a; }
+
+        /* 結果頁與首頁樣式 */
+        .rank-title { font-size: 2.8rem; color: var(--accent-color); font-weight: bold; margin: 20px 0; letter-spacing: 4px; text-align: center; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        #rank-desc { font-size: 1.2rem; line-height: 1.7; color: #444; margin-bottom: 35px; text-align: center; padding: 0 20px; }
+        
+        /* 書封佔位符美化 */
+        .book-cover-placeholder { 
+            width: 160px; height: 230px; 
+            background: #e8e0d0; 
+            margin: 30px auto; 
+            border: 2px solid #c9bba6; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #998; font-weight: bold;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.15);
+            transform: rotate(-2deg); /* 稍微傾斜增加真實感 */
+        }
+
+        .share-group { display: flex; gap: 10px; margin-bottom: 25px; }
+        .btn-share { flex: 1; padding: 12px; border: none; border-radius: 4px; color: white; font-size: 1rem; cursor: pointer; font-weight: bold; font-family: sans-serif; }
+        .btn-fb { background: var(--fb-color); }
+        .btn-threads { background: var(--threads-color); }
+
+        .cta-box { background: #fff8e1; padding: 25px; border-radius: 8px; margin-top: 20px; border: 2px dashed var(--accent-color); text-align: center; }
+        .cta-box a { color: var(--accent-color); text-decoration: none; font-weight: bold; font-size: 1.2rem; border-bottom: 1px solid var(--accent-color); }
+
+        /* 手機版適配調整 */
+        @media (max-width: 600px) {
+            #book-container { padding: 30px 25px; border-left-width: 10px; }
+            h1 { font-size: 1.8rem; }
+            .rank-title { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="book-container">
+    
+    <div id="home-page" class="page active">
+        <p style="text-align:center; font-style:italic; color:#888; margin-bottom: 5px;">—— 你所不知道的文化史 ——</p>
+        <h1>同人文化講座</h1>
+        
+        <div class="book-cover-placeholder">
+			<img src="bookcover.jpg" alt="書封" style="width: 100%; height: 100%; object-fit: cover; border-radius: 5px; box-shadow: 5px 5px 15px rgba(0,0,0,0.2);">
+		</div>
+
+        <p style="font-size: 1.25rem; text-align: center; line-height: 1.7; color: #554433;">
+            沒有 SNS 的年代，<br>我們是如何成為同人？<br>翻開講義，進行段位檢定。
+        </p>
+        <button class="btn-action" onclick="startQuiz()">開啟講義檢定</button>
+    </div>
+
+    <div id="quiz-area" class="page">
+        <div class="progress">講義課題 <span id="current-idx">1</span> / 10</div>
+        <div class="question" id="question-text">載入中...</div>
+        <div class="options" id="options-container"></div>
+        <div id="explanation"></div>
+        <button id="next-btn" class="btn-action" style="display:none;" onclick="nextQuestion()">翻向下一頁</button>
+    </div>
+
+    <div id="result-area" class="page">
+        <h1>檢定卷完成</h1>
+        <p style="text-align:center; font-size:1.3rem; color: #666;">經考據，你的得分為：</p>
+        <p style="text-align:center;"><strong id="final-score" style="font-size:3rem; color: var(--accent-color);">0</strong> <span style="font-size:1.5rem; color:#888">/ 10</span></p>
+        
+        <div class="rank-title" id="rank-name"></div>
+        <p id="rank-desc"></p>
+
+        <p style="text-align: center; font-weight: bold; color: var(--primary-color); margin-bottom: 10px;">▼ 分享你的考據段位 ▼</p>
+        <div class="share-group">
+            <button class="btn-share btn-fb" onclick="shareFB()">Facebook</button>
+            <button class="btn-share btn-threads" onclick="shareThreads()">Threads</button>
+        </div>
+
+        <div class="cta-box">
+            <p style="margin-top:0; font-size: 1.1rem;">想了解更多不為人知的同人秘辛嗎？</p>
+            <a href="https://blog.elielin.com/21009" target="_blank">👉 閱讀《同人文化講座》原著全文</a>
+        </div>
+
+        <button class="btn-action" style="background:#d4c5b9; color:#5d3320; border:none; margin-top:25px; box-shadow:none;" onclick="location.reload()">重新檢定</button>
+    </div>
+</div>
+
+<script>
+    // 完整 20 題題庫
+    const db = [
+        { q: "1940 年於新竹組成，被視為台灣最早的漫畫同人結社是？", o: ["台北漫畫學會", "新高漫畫集團", "曙光漫畫社", "南方青年盟"], a: 1, e: "由葉宏甲、陳家鵬等人組成，後因二戰爆發停止活動。" },
+        { q: "戰後第一本藝文同人雜誌《新新》，其封面是使用何種技術製作？", o: ["全彩印刷", "橡皮刻板", "絹印", "雷射影印"], a: 1, e: "封面是四套色橡皮刻板的菊八開，每期二十頁。" },
+        { q: "1960年代，「腳下沒畫影子」曾被列為禁書理由，是受哪項法規影響？", o: ["出版法", "編印連環漫畫輔導辦法", "刑法", "著作權法"], a: 1, e: "俗稱『漫畫審查制度』，嚴重限制當時的創作自由。" },
+        { q: "1980 年代，哪本雜誌透過新人獎發掘了張靜美、游素蘭等名家？", o: ["歡樂漫畫", "少年快報", "小咪漫畫周刊", "星期漫畫"], a: 2, e: "小咪漫畫周刊舉辦『小咪漫畫新人獎』，是當時少女漫畫作家的搖籃。" },
+        { q: "在台灣，「同人誌」概念的普及，與哪部作品盜版單行本的「小劇場」有關？", o: ["七龍珠", "聖鬥士", "灌籃高手", "幽遊白書"], a: 1, e: "大然版《聖鬥士》置入的『星矢小劇場』，讓衍生創作 Parody 概念在台傳開。" },
+        { q: "1989 年，台灣第一家「阿克 ACCO 漫畫便利屋」開設在哪裡？", o: ["西門町", "台北天母", "台中火車站", "公館"], a: 1, e: "第一家阿克開設在天母，開啟了工具購買與資訊交流的新時代。" },
+        { q: "1997 年，台灣第一個以商業規模展開的定期販售會是？", o: ["CWT", "FF", "Comic World", "動漫節"], a: 2, e: "由捷比與日本 SE 合辦的 CW 1，是定期大型販售會的起點。" },
+        { q: "早期「新新」雜誌編輯方針是「用自己的語言講自己想講的話」，其背景是？", o: ["剛脫離日本統治", "戒嚴時期", "解嚴初期", "網路時代"], a: 0, e: "反映了光復初期台灣人對本土文化前途的抱負。" },
+        { q: "1980 年前後的同人團體「創造者」，其活動特色為何？", o: ["純網路交流", "規模龐大且重視技術交流", "只辦角色扮演", "附屬於政府"], a: 1, e: "創造者曾舉辦百餘人的交流會，且跨校園與年齡組成。" },
+        { q: "1992 年著作權法修正，對同人文化的影響是？", o: ["同人文化消失", "促使同人社團向小型化、趣味化轉型", "讓同人誌變貴", "以上皆非"], a: 1, e: "版權時代來臨，讓非商業性質的同人社團開始單純由同好組成。" },
+        { q: "1970年代末，是哪位漫畫家領頭要求修正荒謬的漫畫審查制度？", o: ["蔡志忠", "牛哥", "鄭問", "朱德庸"], a: 1, e: "牛哥帶領全國漫畫家聯誼會發聲，才促使政府修正審查制度。" },
+        { q: "「星矢小劇場」最早是由哪位日本作者的衍生作品引進？", o: ["島村春奈", "車田正美", "武內直子", "鳥山明"], a: 0, e: "島村春奈的搞笑功力顛覆原作，吸引了大量台灣讀者。" },
+        { q: "1993年第一場具規模的販售會在松山外貿館舉辦，當時是與什麼合辦？", o: ["軍武展", "模型展", "書展", "花展"], a: 1, e: "以學生社團為主，也有一般社團，參展社團達 30 個。" },
+        { q: "「新新」月刊前後總共刊行了多少期？", o: ["2期", "8期", "12期", "1期"], a: 1, e: "共8期（實質出版7本），是研究戰後初期的重要史料。" },
+        { q: "哪所大學社團是 90 年代初校園研究風氣的先驅？", o: ["清大與台大", "輔大與高醫", "東海與逢甲", "以上皆是"], a: 0, e: "90年代初是大專院校動漫畫社團的創設潮。" },
+        { q: "1945年「新新」月刊催生時，有志者每人繳交多少錢作為發行資本？", o: ["一百元", "一千元", "五百元", "免繳"], a: 1, e: "當時每人繳交千元，展現了早期同人集資辦誌的精神。" },
+        { q: "1980年代同人團體「狂熱份子」後來出了哪位知名漫畫家？", o: ["阿推", "木笛", "麥仁杰", "游素蘭"], a: 1, e: "木笛出身於當時知名的團體「狂熱份子」。" },
+        { q: "1985年發掘出麥仁杰、阿推等作家的比賽是？", o: ["小咪獎", "歡樂漫畫新人獎", "金漫獎", "時報獎"], a: 1, e: "時報出版舉辦的三屆『歡樂漫畫新人獎』發掘了多位中生代名家。" },
+        { q: "1990年前後最盛期社員達兩百餘人的社團是？", o: ["ＡＤＴ漫畫聯盟", "地平線", "Ｃ.Ａ.Ｔ", "赤精衛"], a: 0, e: "ＡＤＴ漫畫聯盟在 1990 年前後極為強盛。" },
+        { q: "1990年代，哪本動漫雜誌設有「同人夢工房」專欄推廣社團？", o: ["漢堡漫畫", "神奇地帶", "先鋒動畫", "大然月刊"], a: 1, e: "神奇地帶積極介紹同人活動，是當時重要的交流專欄。" }
+    ];
+
+    let quiz = [], cur = 0, score = 0, currentRank = "";
+
+    function startQuiz() {
+        // 隨機抽取 10 題
+        quiz = db.sort(() => 0.5 - Math.random()).slice(0, 10);
+        // 重置分數
+        score = 0; cur = 0;
+        showPage('quiz-area');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const item = quiz[cur];
+        document.getElementById('current-idx').innerText = cur + 1;
+        document.getElementById('question-text').innerText = item.q;
+        document.getElementById('explanation').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        
+        const optContainer = document.getElementById('options-container');
+        optContainer.innerHTML = '';
+        item.o.forEach((text, i) => {
+            const b = document.createElement('button');
+            b.innerText = text;
+            b.onclick = () => {
+                const btns = optContainer.querySelectorAll('button');
+                btns.forEach(btn => btn.disabled = true);
+                if(i === item.a) { b.classList.add('correct'); score++; }
+                else { b.classList.add('wrong'); btns[item.a].classList.add('correct'); }
+                document.getElementById('explanation').innerHTML = "<strong>💡 考據解析：</strong><br>" + item.e;
+                document.getElementById('explanation').style.display = 'block';
+                document.getElementById('next-btn').style.display = 'block';
+            };
+            optContainer.appendChild(b);
+        });
+        // 每次換題都回到頂部
+        window.scrollTo(0, 0);
+    }
+
+    function nextQuestion() {
+        cur++;
+        if(cur < 10) renderQuestion();
+        else endQuiz();
+    }
+
+    function endQuiz() {
+        showPage('result-area');
+        document.getElementById('final-score').innerText = score;
+        let rank = "", desc = "";
+        if(score === 10) { 
+            rank = "上古神獸"; 
+            desc = "你的知識已達神境！你對台灣同人歷史的掌握程度令人敬畏，絕對是這片土地的守護者。"; 
+        }
+        else if(score >= 8) { 
+            rank = "考據大老"; 
+            desc = "深厚的歷史功底！你見證了無數經典年代的更迭，那些消失的刊物與社團彷彿就在你眼前。"; 
+        }
+        else if(score >= 6) { 
+            rank = "資深同好"; 
+            desc = "你早已在圈內紮根多時，對歷史脈絡有清晰的認知，距離成為大老只剩一步之遙！"; 
+        }
+        else if(score >= 4) { 
+            rank = "博學門生"; 
+            desc = "看來你對同人文化有點認識！讓《同人文化講座》將帶領你補完最後的歷史拼圖吧。"; 
+        }
+        else if(score >= 2) { 
+            rank = "初探新手"; 
+            desc = "一段精彩的歷史正等著你挖掘！翻開《同人文化講座》，你將發現許多未曾聽聞的過去！"; 
+        }
+        else { 
+            rank = "異界路人"; 
+            desc = "別擔心，歷史的大門隨時為你敞開！《同人文化講座》將是你文化探索的最佳指南！"; 
+        }
+        currentRank = rank;
+        document.getElementById('rank-name').innerText = rank;
+        document.getElementById('rank-desc').innerText = desc;
+        window.scrollTo(0, 0);
+    }
+
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    const shareUrl = "https://blog.elielin.com/21009";
+    function shareFB() {
+        const text = `我在《同人文化講座》歷史檢定獲得了 ${score}/10 分，稱號是【${currentRank}】！快來測試你的台灣同人歷史段位！`;
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(text)}`, '_blank');
+    }
+    function shareThreads() {
+        const text = `我在《同人文化講座》歷史檢定獲得了 ${score}/10 分！稱號是【${currentRank}】！\n快來測試你的台灣同人歷史段位：\n${shareUrl}`;
+        window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`, '_blank');
+    }
+</script>
+
+</body>
+</html>
