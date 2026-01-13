@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瑪格梅爾深海檢定：成為專業保育員！</title>
+    <style>
+        :root {
+            --primary-bg: #001219; /* 深海暗底 */
+            --accent-glow: #00f5d4; /* 螢光青 */
+            --water-blue: #005f73; /* 水族館深藍 */
+            --window-border: #94d2bd; /* 觀景窗邊框 */
+            --text-color: #e9d8a6; /* 沙灘金色文字 */
+            --wrong-color: #ae2012;
+            --correct-glow: #94d2bd;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            background-image: radial-gradient(circle at center, #002129 0%, #001219 100%);
+            font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-color);
+        }
+
+        /* 觀景窗主體容器 */
+        #aquarium-container {
+            background-color: rgba(0, 41, 58, 0.8);
+            width: 90%;
+            max-width: 500px;
+            height: 85vh;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0, 245, 212, 0.2), inset 0 0 30px rgba(0,0,0,0.5);
+            border: 4px solid var(--window-border);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 { 
+            color: var(--accent-glow); 
+            text-align: center; 
+            font-size: 1.8rem; 
+            margin-top: 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent-glow);
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .page { display: none; animation: swimIn 0.6s ease-out; }
+        .active { display: block; }
+        @keyframes swimIn { 
+            from { opacity: 0; transform: translateY(20px) scale(0.95); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
+
+        .progress { font-size: 0.9rem; color: var(--window-border); margin-bottom: 15px; text-align: center; letter-spacing: 2px; }
+        .question { font-size: 1.25rem; font-weight: bold; margin-bottom: 25px; line-height: 1.6; color: #fff; }
+        
+        .options { display: grid; gap: 12px; }
+        button {
+            padding: 14px 18px;
+            font-size: 1rem;
+            border: 1px solid var(--water-blue);
+            border-radius: 12px;
+            background: rgba(0, 95, 115, 0.3);
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: left;
+            font-family: inherit;
+            color: var(--text-color);
+        }
+        button:hover:not(:disabled) { 
+            background: rgba(0, 245, 212, 0.2); 
+            border-color: var(--accent-glow); 
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.3);
+        }
+        button.correct { background: #2d6a4f !important; border-color: var(--accent-glow); color: #fff; font-weight: bold; }
+        button.wrong { background: #780000 !important; border-color: #ff4d6d; color: #fff; }
+
+        #explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-glow);
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .btn-action {
+            display: block; width: 100%; margin-top: 25px;
+            background: var(--accent-glow); color: var(--primary-bg);
+            text-align: center; padding: 15px; border: none;
+            border-radius: 50px; font-size: 1.2rem; cursor: pointer; font-weight: bold;
+            box-shadow: 0 0 20px rgba(0, 245, 212, 0.4);
+            transition: 0.3s;
+        }
+        .btn-action:hover { transform: scale(1.02); filter: brightness(1.1); }
+
+        .rank-title { font-size: 2.2rem; color: var(--accent-glow); font-weight: bold; margin: 15px 0; text-align: center; text-shadow: 0 0 15px var(--accent-glow); }
+        #rank-desc { font-size: 1.05rem; line-height: 1.6; color: #eee; margin-bottom: 30px; text-align: center; }
+        
+        .cover-img { 
+            width: 180px; height: 250px; 
+            margin: 20px auto; 
+            border: 3px solid var(--accent-glow);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 245, 212, 0.3);
+        }
+
+        .share-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-share { flex: 1; padding: 10px; border: none; border-radius: 8px; color: white; font-size: 0.9rem; cursor: pointer; font-weight: bold; }
+        .btn-fb { background: #1877F2; }
+        .btn-threads { background: #000; border: 1px solid #444; }
+
+        /* 手機版適配 */
+        @media (max-width: 600px) {
+            #aquarium-container { padding: 20px; height: 90vh; }
+            h1 { font-size: 1.5rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="aquarium-container">
+    
+    <div id="home-page" class="page active">
+        <p style="text-align:center; font-style:italic; color:var(--window-border); margin-bottom: 5px;">—— 深海 200 公尺的奇蹟 ——</p>
+        <h1>瑪格梅爾深海檢定</h1>
+        
+        <div class="cover-img">
+            <img src="bookcover.jpg" alt="瑪格梅爾" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+
+        <p style="font-size: 1.1rem; text-align: center; line-height: 1.6;">
+            歡迎來到瑪格梅爾水族館。<br>
+            這裡展示著鮮為人知的生命，<br>
+            你準備好接受「保育員檢定」了嗎？
+        </p>
+        <button class="btn-action" onclick="startQuiz()">進入潛水艙</button>
+    </div>
+
+    <div id="quiz-area" class="page">
+        <div class="progress">觀測座標 <span id="current-idx">1</span> / 10</div>
+        <div class="question" id="question-text">下潛中...</div>
+        <div class="options" id="options-container"></div>
+        <div id="explanation"></div>
+        <button id="next-btn" class="btn-action" style="display:none;" onclick="nextQuestion()">移動至下個觀測點</button>
+    </div>
+
+    <div id="result-area" class="page">
+        <h1>保育員檢定報告</h1>
+        <p style="text-align:center; font-size:1.1rem; color: var(--window-border);">觀測資料同步完成，你的得分為：</p>
+        <p style="text-align:center;"><strong id="final-score" style="font-size:3.5rem; color: var(--accent-glow);">0</strong> <span style="font-size:1.2rem; color:var(--window-border)">/ 10</span></p>
+        
+        <div class="rank-title" id="rank-name"></div>
+        <p id="rank-desc"></p>
+
+        <div class="share-group">
+            <button class="btn-share btn-fb" onclick="shareFB()">分享到 Facebook</button>
+            <button class="btn-share btn-threads" onclick="shareThreads()">分享到 Threads</button>
+        </div>
+
+        <button class="btn-action" style="background:transparent; color:var(--accent-glow); border:2px solid var(--accent-glow); box-shadow:none;" onclick="location.reload()">重新觀測</button>
+    </div>
+</div>
+
+<script>
+    const db = [
+        { q: "瑪格梅爾（Mag Mell）深海水族館位於水深多少公尺的海底？", o: ["50 公尺", "100 公尺", "200 公尺", "500 公尺"], a: 2, e: "它是全世界首座設立於水深 200 公尺處的水族館。" },
+        { q: "主角天城航太郎在水族館最初擔任的職務是什麼？", o: ["獸醫", "解說員", "潛水員", "打掃工讀生"], a: 3, e: "航太郎最初是以打掃工讀生的身分在館內工作。" },
+        { q: "航太郎因為熱愛生物且工作勤奮，被同事戲稱為？", o: ["鯊魚小弟", "具足蟲小弟", "烏賊少年", "鯨魚館長"], a: 1, e: "因為他特別喜歡具足蟲且負責打掃，故有此綽號。" },
+        { q: "傳說中的海怪「克拉肯（Kraken）」被認為是以哪種生物為原型？", o: ["皺鰓鯊", "抹香鯨", "大王烏賊", "皇帶魚"], a: 2, e: "大王烏賊巨大的身姿與觸手是海怪傳說的藍本。" },
+        { q: "大王烏賊的眼珠直徑約 30 公分，相當於哪種球體？", o: ["乒乓球", "棒球", "網球", "籃球"], a: 3, e: "大王烏賊擁有動物界最大的眼珠，大小如籃球。" },
+        { q: "航太郎提到，大王具足蟲在深海生態系中扮演什麼角色？", o: ["頂端掠食者", "深海清潔工", "植物生產者", "海底建築師"], a: 1, e: "牠們負責清理掉到海床上的生物屍體。" },
+        { q: "日本鳥羽水族館曾有一隻大王具足蟲，在斷食幾年後依然存活？", o: ["1 年", "3 年", "5 年", "10 年"], a: 2, e: "這隻傳奇的具足蟲絕食 5 年零 43 天才去世。" },
+        { q: "館長在引誘大王具足蟲游泳時，是利用了哪種物質的味道？", o: ["蝦肥料", "海草", "鐵鏽味", "香水"], a: 0, e: "館長在水槽上方撒了蝦肥料引誘牠們運動。" },
+        { q: "皺鰓鯊被稱為「活化石」，是因為其特徵與多少年前的鯊魚相似？", o: ["1 千萬年前", "6 千萬年前", "2 億年前", "4 億年前"], a: 3, e: "皺鰓鯊保有約 4 億年前泥盆紀時期的特徵。" },
+        { q: "電影《正宗哥吉拉》中的第二型態，是以哪種生物為設計原型？", o: ["皺鰓鯊", "大王具足蟲", "燈籠魚", "扁鯊"], a: 0, e: "蒲田君的腮部與眼睛設計靈感正來自皺鰓鯊。" },
+        { q: "第二章中，航太郎從死去的皺鰓鯊母魚體內救出了什麼？", o: ["未消化食物", "魚肝油", "幼魚胚胎", "寄生蟲"], a: 2, e: "雖然母魚死去，但成功救下了對環境變化極為敏感的幼魚。" },
+        { q: "皺鰓鯊最顯著的外觀特徵是牠擁有幾對鰓裂？", o: ["3 對", "5 對", "6 對", "8 對"], a: 2, e: "皺鰓鯊擁有比一般鯊魚更多的 6 對鰓裂。" },
+        { q: "「偕老同穴」這種看起來像玻璃藝術品的生物屬於？", o: ["軟體動物", "海綿動物", "腔腸動物", "節肢動物"], a: 1, e: "它是一種原始的矽質海綿動物。" },
+        { q: "為什麼「偕老同穴」常被作為結婚賀禮？", o: ["形狀像婚戒", "內部有一對終生共生的儷蝦", "只在情人節出現", "會發出粉紅光"], a: 1, e: "儷蝦幼年進入後長大便無法離開，象徵白頭偕老。" },
+        { q: "奧麗薇的丈夫稱偕老同穴為「世界上最美的生物」是為了？", o: ["投訴信", "辭職聲明", "求婚告白", "科學描述"], a: 2, e: "這是館長代為傳達的、遲到了多年的求婚誓言。" },
+        { q: "抹香鯨一生中大約有多少比例的時間是在深海獵食度過的？", o: ["1/10", "1/2", "2/3", "9/10"], a: 2, e: "雖然是哺乳類，但牠們大部分時間都在深海與巨型烏賊博鬥。" },
+        { q: "抹香鯨頭部的「鯨腦油」有什麼功能？", o: ["攻擊敵人", "調節浮力", "儲備食物", "皮膚濕潤"], a: 1, e: "透過溫度變化改變鯨腦油狀態，可幫助抹香鯨下潛或上浮。" },
+        { q: "在深海中，抹香鯨與大王烏賊之間的關係通常是？", o: ["互利共生", "朋友", "捕食者與獵物", "完全不遇見"], a: 2, e: "抹香鯨是少數能捕食大王烏賊的頂級掠食者。" },
+        { q: "湊館長在第一章開館秀中，成功引誘出的神祕生物是？", o: ["大王具足蟲", "大王烏賊", "硨磲貝", "白鯨"], a: 1, e: "他在全球首座深海水族館開館當天展示了活體大王烏賊。" },
+        { q: "第一集最後，航太郎得到的職位「保育員助理」職責是？", o: ["只負責打掃", "協助照顧生物", "販賣部店員", "警衛員"], a: 1, e: "這象徵航太郎正式邁向專業保育員的第一步。" }
+    ];
+
+    let quiz = [], cur = 0, score = 0, currentRank = "";
+
+    function startQuiz() {
+        quiz = db.sort(() => 0.5 - Math.random()).slice(0, 10);
+        score = 0; cur = 0;
+        showPage('quiz-area');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const item = quiz[cur];
+        document.getElementById('current-idx').innerText = cur + 1;
+        document.getElementById('question-text').innerText = item.q;
+        document.getElementById('explanation').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        
+        const optContainer = document.getElementById('options-container');
+        optContainer.innerHTML = '';
+        item.o.forEach((text, i) => {
+            const b = document.createElement('button');
+            b.innerText = text;
+            b.onclick = () => {
+                const btns = optContainer.querySelectorAll('button');
+                btns.forEach(btn => btn.disabled = true);
+                if(i === item.a) { b.classList.add('correct'); score++; }
+                else { b.classList.add('wrong'); btns[item.a].classList.add('correct'); }
+                document.getElementById('explanation').innerHTML = "<strong>📘 保育員筆記：</strong><br>" + item.e;
+                document.getElementById('explanation').style.display = 'block';
+                document.getElementById('next-btn').style.display = 'block';
+            };
+            optContainer.appendChild(b);
+        });
+        document.getElementById('aquarium-container').scrollTo(0, 0);
+    }
+
+    function nextQuestion() {
+        cur++;
+        if(cur < 10) renderQuestion();
+        else endQuiz();
+    }
+
+    function endQuiz() {
+        showPage('result-area');
+        document.getElementById('final-score').innerText = score;
+        let rank = "", desc = "";
+        if(score === 10) { rank = "傳說級大王烏賊"; desc = "太驚人了！你對深海的知識簡直就是深海之王，瑪格梅爾需要你這樣的頂尖保育員！"; }
+        else if(score >= 8) { rank = "金牌保育員"; desc = "你對深海生物如數家珍，連湊館長都會對你的觀察力感到佩服。"; }
+        else if(score >= 6) { rank = "資深導覽員"; desc = "你已經能帶領遊客探索神祕的瑪格梅爾了，對深海的熱愛溢於言表！"; }
+        else if(score >= 4) { rank = "保育員助理"; desc = "恭喜你晉升！你已經掌握了基本知識，跟著航太郎一起加油吧！"; }
+        else if(score >= 2) { rank = "具足蟲小弟"; desc = "雖然還在打掃階段，但只要保持熱忱，你也能看見深海的奇蹟。"; }
+        else { rank = "路過的浮游生物"; desc = "看來你還需要多翻翻漫畫，深海的世界比你想得還要廣闊喔！"; }
+        currentRank = rank;
+        document.getElementById('rank-name').innerText = rank;
+        document.getElementById('rank-desc').innerText = desc;
+    }
+
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function shareFB() {
+        const text = `我在《瑪格梅爾深海檢定》獲得了 ${score}/10 分，評價是【${currentRank}】！快來挑戰深海知識！`;
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(text)}`, '_blank');
+    }
+    function shareThreads() {
+        const text = `我在《瑪格梅爾深海檢定》獲得了 ${score}/10 分！評價是【${currentRank}】！🌊🦑\n快來挑戰你的深海知識吧！`;
+        window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`, '_blank');
+    }
+</script>
+
+</body>
+</html>
