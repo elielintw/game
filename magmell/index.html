@@ -126,6 +126,28 @@
         .btn-fb { background: #1877F2; }
         .btn-threads { background: #000; border: 1px solid #444; }
 
+        .cta-box {
+            background: rgba(0, 245, 212, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 25px;
+            border: 1px dashed var(--accent-glow);
+            text-align: center;
+        }
+        .cta-box a {
+            color: var(--accent-glow);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: block;
+            margin-top: 8px;
+            transition: 0.3s;
+        }
+        .cta-box a:hover {
+            text-shadow: 0 0 10px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
         /* 手機版適配 */
         @media (max-width: 600px) {
             #aquarium-container { padding: 20px; height: 90vh; }
@@ -170,12 +192,20 @@
         <div class="rank-title" id="rank-name"></div>
         <p id="rank-desc"></p>
 
+        <p style="text-align: center; font-weight: bold; font-size: 0.9rem; margin-bottom: 10px;">▼ 回傳觀測數據 ▼</p>
         <div class="share-group">
-            <button class="btn-share btn-fb" onclick="shareFB()">分享到 Facebook</button>
-            <button class="btn-share btn-threads" onclick="shareThreads()">分享到 Threads</button>
+            <button class="btn-share btn-fb" onclick="shareFB()">Facebook</button>
+            <button class="btn-share btn-threads" onclick="shareThreads()">Threads</button>
         </div>
 
-        <button class="btn-action" style="background:transparent; color:var(--accent-glow); border:2px solid var(--accent-glow); box-shadow:none;" onclick="location.reload()">重新觀測</button>
+        <div class="cta-box">
+            <p style="margin:0; font-size: 0.9rem; color: var(--window-border);">想探索更多瑪格梅爾的神祕生物嗎？</p>
+            <a href="https://www.sky-highpress.com/skyhighevent/eventfeature/sugishitakiyomi-magmell" target="_blank">
+                👉 前往《瑪格梅爾深海水族館》官網
+            </a>
+        </div>
+
+        <button class="btn-action" style="background:transparent; color:var(--accent-glow); border:2px solid var(--accent-glow); box-shadow:none; margin-top: 20px;" onclick="location.reload()">重新觀測</button>
     </div>
 </div>
 
@@ -184,7 +214,7 @@
         { q: "瑪格梅爾（Mag Mell）深海水族館位於水深多少公尺的海底？", o: ["50 公尺", "100 公尺", "200 公尺", "500 公尺"], a: 2, e: "它是全世界首座設立於水深 200 公尺處的水族館。" },
         { q: "主角天城航太郎在水族館最初擔任的職務是什麼？", o: ["獸醫", "解說員", "潛水員", "打掃工讀生"], a: 3, e: "航太郎最初是以打掃工讀生的身分在館內工作。" },
         { q: "航太郎因為熱愛生物且工作勤奮，被同事戲稱為？", o: ["鯊魚小弟", "具足蟲小弟", "烏賊少年", "鯨魚館長"], a: 1, e: "因為他特別喜歡具足蟲且負責打掃，故有此綽號。" },
-        { q: "傳說中的海怪「克拉肯（Kraken）」被認為是以哪種生物為原型？", o: ["皺鰓鯊", "抹香鯨", "大王烏賊", "皇帶魚"], a: 2, e: "大王烏賊巨大的身姿與觸手是海怪傳說的藍本。" },
+        { q: "傳說中的海怪「克拉肯（Kraken）」被認為是以哪種深海生物為原型？", o: ["皺鰓鯊", "抹香鯨", "大王烏賊", "皇帶魚"], a: 2, e: "大王烏賊巨大的身姿與觸手是海怪傳說的藍本。" },
         { q: "大王烏賊的眼珠直徑約 30 公分，相當於哪種球體？", o: ["乒乓球", "棒球", "網球", "籃球"], a: 3, e: "大王烏賊擁有動物界最大的眼珠，大小如籃球。" },
         { q: "航太郎提到，大王具足蟲在深海生態系中扮演什麼角色？", o: ["頂端掠食者", "深海清潔工", "植物生產者", "海底建築師"], a: 1, e: "牠們負責清理掉到海床上的生物屍體。" },
         { q: "日本鳥羽水族館曾有一隻大王具足蟲，在斷食幾年後依然存活？", o: ["1 年", "3 年", "5 年", "10 年"], a: 2, e: "這隻傳奇的具足蟲絕食 5 年零 43 天才去世。" },
@@ -248,7 +278,7 @@
         showPage('result-area');
         document.getElementById('final-score').innerText = score;
         let rank = "", desc = "";
-        if(score === 10) { rank = "傳說級大王烏賊"; desc = "太驚人了！你對深海的知識簡直就是深海之王，瑪格梅爾需要你這樣的頂尖保育員！"; }
+        if(score === 10) { rank = "傳說級大王烏賊"; desc = "太驚人了！你對深海的知識簡集就是深海之王，瑪格梅爾需要你這樣的頂尖保育員！"; }
         else if(score >= 8) { rank = "金牌保育員"; desc = "你對深海生物如數家珍，連湊館長都會對你的觀察力感到佩服。"; }
         else if(score >= 6) { rank = "資深導覽員"; desc = "你已經能帶領遊客探索神祕的瑪格梅爾了，對深海的熱愛溢於言表！"; }
         else if(score >= 4) { rank = "保育員助理"; desc = "恭喜你晉升！你已經掌握了基本知識，跟著航太郎一起加油吧！"; }
@@ -264,12 +294,13 @@
         document.getElementById(id).classList.add('active');
     }
 
+    const shareUrl = "https://www.sky-highpress.com/skyhighevent/eventfeature/sugishitakiyomi-magmell/magmellqa";
     function shareFB() {
-        const text = `我在《瑪格梅爾深海檢定》獲得了 ${score}/10 分，評價是【${currentRank}】！快來挑戰深海知識！`;
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(text)}`, '_blank');
+        const text = `我在《瑪格梅爾深海檢定》獲得了 ${score}/10 分，評價是【${currentRank}】！快來挑戰你的深海知識！`;
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(text)}`, '_blank');
     }
     function shareThreads() {
-        const text = `我在《瑪格梅爾深海檢定》獲得了 ${score}/10 分！評價是【${currentRank}】！🌊🦑\n快來挑戰你的深海知識吧！`;
+        const text = `我在《瑪格梅爾深海檢定》獲得了 ${score}/10 分！評價是【${currentRank}】！\n快來挑戰你的深海知識吧！\n${shareUrl}`;
         window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`, '_blank');
     }
 </script>
