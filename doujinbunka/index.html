@@ -121,7 +121,9 @@
         .share-group { display: flex; gap: 10px; margin-bottom: 25px; }
         .btn-share { flex: 1; padding: 12px; border: none; border-radius: 4px; color: white; font-size: 1rem; cursor: pointer; font-weight: bold; font-family: sans-serif; }
         .btn-fb { background: var(--fb-color); }
-        .btn-threads { background: var(--threads-color); }
+        .btn-threads { background: #444444; }
+		.btn-x { background: #000000; border: 1px solid #ffffff; } /* X 採用黑色 */
+        .btn-plurk { background: #ff574d; } /* Plurk 採用經典橘紅色 */
 
         .cta-box { background: #fff8e1; padding: 25px; border-radius: 8px; margin-top: 20px; border: 2px dashed var(--accent-color); text-align: center; }
         .cta-box a { color: var(--accent-color); text-decoration: none; font-weight: bold; font-size: 1.2rem; border-bottom: 1px solid var(--accent-color); }
@@ -172,6 +174,10 @@
         <div class="share-group">
             <button class="btn-share btn-fb" onclick="shareFB()">Facebook</button>
             <button class="btn-share btn-threads" onclick="shareThreads()">Threads</button>
+        </div>
+		<div class="share-group">
+            <button class="btn-share btn-x" onclick="shareX()">X (Twitter)</button>
+            <button class="btn-share btn-plurk" onclick="sharePlurk()">Plurk</button>
         </div>
 
         <div class="cta-box">
@@ -300,8 +306,18 @@
         const text = `我在《同人文化講座》歷史檢定獲得了 ${score}/10 分！稱號是【${currentRank}】！\n快來測試你的台灣同人文化史段位：\n${shareUrl}`;
         window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`, '_blank');
     }
+	function shareX() {
+        const text = `我在《同人文化講座》歷史檢定獲得了 ${score}/10 分！稱號是【${currentRank}】！\n快來測試你的台灣同人文化史段位！`;
+        const url = shareUrl;
+        window.open(`https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+    }
+    function sharePlurk() {
+        const text = `我在《同人文化講座》歷史檢定獲得了 ${score}/10 分！稱號是【${currentRank}】！快來測試你的台灣同人文化史段位`;
+        const url = shareUrl;
+        // Plurk 的分享格式通常是 [URL] (文字)
+        window.open(`https://www.plurk.com/?status=${encodeURIComponent(url)}%20(${encodeURIComponent(text)})`, '_blank');
+    }	
 </script>
 
 </body>
 </html>
-
